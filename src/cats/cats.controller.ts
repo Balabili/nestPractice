@@ -1,6 +1,6 @@
 import {
   Get, Controller, Post, HttpCode, Param, Body,
-  UseFilters, UseGuards, ReflectMetadata,
+  UseFilters, UseGuards, ReflectMetadata, UseInterceptors,
   // HttpException, HttpStatus, ForbiddenException
 } from '@nestjs/common';
 import { CatService } from './cats.service';
@@ -11,10 +11,15 @@ import { HttpExceptionFilter } from '../Exception/http-exception.filter';
 import { ParstIntPipe } from '../pipe/parse-int.pipe';
 import { RolesGuard } from '../guard/role.guard';
 import { Roles } from '../decorator/roles.decorator';
+import { LoggingInterceptor } from '../interceptor/logging.interceptor';
+import { TransformInterceptor } from '../interceptor/transform.interceptor';
+import { User } from '../decorator/user.decorator';
 
 @Controller('cats')
 // @UseGuards(RolesGuard)
-@UseGuards(new RolesGuard())
+// @UseGuards(new RolesGuard())
+// @UseInterceptors(LoggingInterceptor)
+@UseInterceptors(TransformInterceptor)
 export class CatController {
   constructor(private readonly catService: CatService) { }
 
@@ -35,6 +40,11 @@ export class CatController {
   async findOne(@Param('id', new ParstIntPipe()) id): Promise<any[]> {
     console.log(id);
     return [];
+  }
+
+  @Get('/user')
+  async findUser(@User('demo') user: string): Promise<string> {
+    return '';
   }
 
   @Get('/findAll')
