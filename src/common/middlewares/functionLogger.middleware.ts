@@ -1,4 +1,4 @@
 export function logger(req, res, next) {
-  console.log(`Request function...`);
+  console.log('Request');
   next();
-};
+}

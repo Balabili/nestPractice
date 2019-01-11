@@ -1,19 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { Cat } from './interface/cat.interface';
+import { CreateCatDto } from './dto/createCat.dto';
 
 @Injectable()
-export class CatService {
-  private readonly cats: Cat[] = [];
+export class CatsService {
+  private readonly cats: CreateCatDto[] = [];
 
-  create(cat: Cat) {
+  create(cat: CreateCatDto) {
     this.cats.push(cat);
   }
 
-  root(): string {
-    return 'Hello World!';
-  }
-
-  async findAll(): Promise<Cat[]> {
+  findAll(): CreateCatDto[] {
     return this.cats;
   }
 }

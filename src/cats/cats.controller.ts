@@ -1,70 +1,33 @@
-import {
-  Get, Controller, Post, HttpCode, Param, Body,
-  UseFilters, UseGuards, ReflectMetadata, UseInterceptors,
-  // HttpException, HttpStatus, ForbiddenException
-} from '@nestjs/common';
-import { CatService } from './cats.service';
-import { CreateCatDto } from './dto/cat.dto';
-import { Cat } from './interface/cat.interface';
-import { ForbiddenException } from '../Exception/forbidden.exception';
-import { HttpExceptionFilter } from '../Exception/http-exception.filter';
-import { ParstIntPipe } from '../pipe/parse-int.pipe';
-import { RolesGuard } from '../guard/role.guard';
-import { Roles } from '../decorator/roles.decorator';
-import { LoggingInterceptor } from '../interceptor/logging.interceptor';
-import { TransformInterceptor } from '../interceptor/transform.interceptor';
-import { User } from '../decorator/user.decorator';
+import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, ParseIntPipe, UseInterceptors } from '@nestjs/common';
+import { CatsService } from './cats.service';
+import { CreateCatDto } from './dto/createCat.dto';
+import { ForbiddenException } from '../common/Exceptions/forbidden.exception';
+import { LoggingInterceptor } from '../common/Interceptor/logging.interceptor';
 
+@UseInterceptors(LoggingInterceptor)
 @Controller('cats')
-// @UseGuards(RolesGuard)
-// @UseGuards(new RolesGuard())
-// @UseInterceptors(LoggingInterceptor)
-@UseInterceptors(TransformInterceptor)
-export class CatController {
-  constructor(private readonly catService: CatService) { }
+export class CatsController {
+  constructor(private readonly catsService: CatsService) { }
+
+  @Get()
+  async findAll(): Promise<CreateCatDto[]> {
+    return this.catsService.findAll();
+  }
+
+  @Get('detail/:id')
+  findOne(@Param('id', new ParseIntPipe()) params) {
+    console.log(params);
+    return {};
+  }
+
+  @Get('err')
+  throwErr() {
+    throw new ForbiddenException();
+  }
 
   @HttpCode(200)
   @Post()
-  async create(@Body() createCatDto: CreateCatDto) {
-    this.catService.create(createCatDto);
-  }
-
-  @Get()
-  // @ReflectMetadata('role', ['admin'])
-  @Roles('admin')
-  root(): string {
-    return this.catService.root();
-  }
-
-  @Post(':id')
-  async findOne(@Param('id', new ParstIntPipe()) id): Promise<any[]> {
-    console.log(id);
-    return [];
-  }
-
-  @Get('/user')
-  async findUser(@User('demo') user: string): Promise<string> {
-    return '';
-  }
-
-  @Get('/findAll')
-  findAll(): Promise<Cat[]> {
-    return this.catService.findAll();
-  }
-
-  @Get('/throwError1')
-  throwError() {
-    // throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-    // throw new HttpException({
-    //   status: HttpStatus.FORBIDDEN,
-    //   error: 'This is a custom message',
-    // }, 403);
-    throw new ForbiddenException();
-  }
-
-  @Get('/throwError2')
-  @UseFilters(new HttpExceptionFilter())
-  throwError2() {
-    throw new ForbiddenException();
+  create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
+    this.catsService.create(createCatDto);
   }
 }

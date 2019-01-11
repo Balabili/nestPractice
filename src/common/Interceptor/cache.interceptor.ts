@@ -1,6 +1,5 @@
-import { Injectable, NestInterceptor, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { of } from 'rxjs/observable/of';
+import { Injectable, NestInterceptor, ExecutionContext } from "@nestjs/common";
+import { Observable, of } from "rxjs";
 
 @Injectable()
 export class CacheInterceptor implements NestInterceptor {

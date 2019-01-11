@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
-import { CatController } from './cats.controller';
-import { CatService } from './cats.service';
+import { CatsController } from './cats.controller';
+import { CatsService } from './cats.service';
 
 @Module({
-  controllers: [CatController],
-  providers: [CatService],
-  exports: [CatService],
+  controllers: [CatsController],
+  providers: [CatsService],
+  exports: [CatsService],
 })
-export class CatModule {
-  constructor(private readonly catService: CatService) { }
-}
+
+export class CatsModule { }

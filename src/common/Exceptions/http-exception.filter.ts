@@ -1,5 +1,4 @@
-import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
-import { HttpException } from '@nestjs/common';
+import { Catch, HttpException, ExceptionFilter, ArgumentsHost } from '@nestjs/common';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -7,12 +6,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
-    const statusCode = exception.getStatus();
 
     response
-      .status(statusCode)
+      .status(exception.getStatus())
       .json({
-        statusCode,
+        statusCode: exception.getStatus(),
         timestamp: new Date().toISOString(),
         path: request.url,
       });
